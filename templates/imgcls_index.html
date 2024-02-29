@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task 4-3</title>
+</head>
+<body>
+    <h1>Task 4-3</h1>
+    <h2>Image Classification</h2>
+    <form id="image classification demo" method="post" action="/predict" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <button type="submit">Make Prediction</button>
+    </form>
+
+    {% if img_stream %}
+        <img src="data:;base64,{{ img_stream }}">
+    {% endif %}
+
+    {% if prediction %}
+        <h3>Prediction Result:</h3>
+        <p>{{ prediction }}</p>
+    {% endif %}
+
+
+</body>
+</html>
