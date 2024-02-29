@@ -1,10 +1,11 @@
 import os
 from flask import Flask, request, jsonify,render_template
-from torchvision import models, transforms
+from torchvision import transforms
 from PIL import Image
 import torch
-from backbone.model import MyEfficientNet_B0,MyMobilenet_v3_large,MyResnet18
+from backbone.model import MyEfficientNet_B0,MyEfficientnet_v2_m
 import io
+from utils.coco_inf import multi_label_inf
 
 
 app = Flask(__name__)
@@ -13,6 +14,12 @@ model = MyEfficientNet_B0(num_classes=257)
 weights_pth = 'model_saved/t1_2/EfficientNet_b0_2024-02-28-02-07-10/final.pt'
 model.load_state_dict(torch.load(weights_pth))
 model.cuda().eval()
+
+
+multi_label_model = MyEfficientnet_v2_m(pretrained=False, num_classes=80).cuda()
+weights_pth = 'best.pt'
+multi_label_model.load_state_dict(torch.load(weights_pth))
+multi_label_model.eval()
 
 def return_img_stream(img_local_path):
     import base64
@@ -31,7 +38,7 @@ def read_label():
     return cls_dict
 
 
-def makePred(model,img):
+def makePred(img,model):
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -54,8 +61,6 @@ def makePred(model,img):
         print(cls_dict[idx])
     return cls_dict[idx]
 
-
-
 @app.route('/')
 def index():
     return render_template('imgcls_index.html')
@@ -70,7 +75,9 @@ def predict():
 
     try:
         image = Image.open(io.BytesIO(image_file.read()))
-        pred = makePred(model,image)
+
+        # pred = makePred(image,model)
+        pred = multi_label_inf(image,multi_label_model)
 
         tmp_img_name = os.path.join('templates','tmp_img.jpg')
         image.save(tmp_img_name)

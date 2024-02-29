@@ -9,7 +9,7 @@ from torchvision.models import ResNet18_Weights,EfficientNet_B0_Weights, MobileN
 from torchvision.io import read_image
 import os
 from PIL import Image
-from backbone.model import MyEfficientNet_B0,MyMobilenet_v3_large,MyResnet18,MyResnet101
+from backbone.model import MyEfficientNet_B0,MyMobilenet_v3_large,MyResnet18,MyResnet101,MyEfficientnet_v2_m
 import numpy as np
 
 def read_label():
