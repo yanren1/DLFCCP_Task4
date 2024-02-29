@@ -69,6 +69,7 @@ def index():
 def predict():
 
     image_file = request.files['image']
+    threshold = float(request.form.get('threshold', 0.5))
 
     if image_file.filename == '':
         return jsonify({'error': 'No selected file'})
@@ -77,7 +78,7 @@ def predict():
         image = Image.open(io.BytesIO(image_file.read()))
 
         # pred = makePred(image,model)
-        pred = multi_label_inf(image,multi_label_model)
+        pred = multi_label_inf(image,multi_label_model,threshhold=threshold)
 
         tmp_img_name = os.path.join('templates','tmp_img.jpg')
         image.save(tmp_img_name)
